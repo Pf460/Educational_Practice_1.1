@@ -1,5 +1,7 @@
+from django.http import Http404
 from django.shortcuts import render
 from .models import Book, Author, BookInstance, Genre
+from django.views import generic
 
 def index(request):
     num_books = Book.objects.all().count()
@@ -26,3 +28,60 @@ def index(request):
             'num_books_title_book': num_books_title_book
         }
     )
+
+class BookListView(generic.ListView):
+    model = Book
+    pagination_by = 10
+    # def get_context_data(self, **kwargs):
+    #     получаем основной контекст
+    #     context = super(BookListView, self).get_context_data(**kwargs)
+    #     определение новой переменной в контексте
+    #     context['some_data'] = 'This is some date'
+    #     return context
+
+    #[:5] сколько мы выводим
+    def get_queryset(self):
+        return Book.objects.all()[:5]
+    template_name = 'books/book_list.html'
+
+class BookDetailView(generic.DetailView):
+    model = Book
+    template_name = 'books/book_detail.html'
+
+    def book_detail_view(request, pk):
+        try:
+            book_id = Book.objects.get(pk=pk)
+        except Book.DoesNotExist:
+            raise Http404("Book does not exist")
+        # Более простая обработка ошибки 404
+        # book_id=get_object_or_404(Book, pk=pk)
+
+        return render(
+            request,
+            'catalog/book_detail.html',
+            context={'book': book_id, }
+        )
+
+class AuthorListView(generic.ListView):
+    model = Author
+    paginate_by = 10
+    template_name = 'authors/author_list.html'
+
+    def get_queryset(self):
+        return Author.objects.all()[:5]
+
+class AuthorDetailView(generic.DetailView):
+    model = Author
+    template_name = 'authors/author_detail.html'
+
+    def author_detail_view(request, pk):
+        try:
+            author_id = Author.objects.get(pk=pk)
+        except:
+            raise Http404("Author does not exist")
+
+        return render(
+            request,
+            'catalog/author_detail.html',
+            context={'author': author_id, }
+        )
