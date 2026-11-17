@@ -16,6 +16,9 @@ def index(request):
     num_genres_western = Genre.objects.filter(name__icontains='western').count()
     num_books_title_book = Book.objects.filter(title__icontains='book').count()
 
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits+1
+
     return render(
         request,
         'index.html',
@@ -25,7 +28,8 @@ def index(request):
             'num_instances_available': num_instances_available,
             'num_authors': num_authors,
             'num_genres_western': num_genres_western,
-            'num_books_title_book': num_books_title_book
+            'num_books_title_book': num_books_title_book,
+            'num_visits': num_visits
         }
     )
 

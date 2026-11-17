@@ -18,4 +18,12 @@
     <li><strong>Book where in title book:</strong> {{ num_books_title_book }}</li>
   </ul>
 
+  <p>
+    You have visited this page {{ num_visits }}
+    {% if num_visits == 1 %}
+      time
+    {% else %}
+      times
+    {% endif %}.
+  </p>
 {% endblock %}
