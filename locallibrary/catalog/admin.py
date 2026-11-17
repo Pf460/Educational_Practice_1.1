@@ -1,5 +1,5 @@
 from django.contrib import admin
-from catalog.models import Genre, Author, Book, BookInstance
+from .models import Genre, Author, Book, BookInstance
 
 class BooksInline(admin.TabularInline):
     model = Book
