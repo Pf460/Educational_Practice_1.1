@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404
 from django.shortcuts import render
 from .models import Book, Author, BookInstance, Genre
@@ -86,6 +87,27 @@ class AuthorDetailView(generic.DetailView):
 
         return render(
             request,
-            'catalog/author_detail.html',
+            'authors/author_detail.html',
             context={'author': author_id, }
         )
+
+class BookInstanceOnLoanView(LoginRequiredMixin, generic.ListView):
+    model = BookInstance
+    template_name = 'bookinstance_list.html'
+    pagination_by = 10
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower = self.request.user).filter(status__exact="o").order_by('due_back')
+
+class ViewAllBookInstancesForLibrarian(PermissionRequiredMixin, generic.ListView):
+    model = BookInstance
+    template_name = 'librarian/allbookinstance_list.html'
+    paginate_by = 10
+    permission_required = (
+        'catalog.can_mark_returned',
+        'catalog.can_edit'
+    )
+
+    raise_exception = True #настройка обработки прав пользования
+
+    def get_queryset(self):
+        return BookInstance.objects.all().order_by('due_back')
