@@ -2,3 +2,21 @@
 
 ---
 ### Разработка кода информационных систем
+
+--- 
+
+### Инструкция по запуску:
+
+````bash
+git clone https://github.com/Pf460/Educational_Practice_1.1.git
+
+cd locallivrary
+python manage.py createsuperuser
+
+python manage.py runserver
+````
+
+### Рабочие адреса
+
+- http://127.0.0.1:8000/ - базовый url
+- http://127.0.0.1:8000/admin - админка
