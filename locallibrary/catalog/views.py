@@ -3,6 +3,13 @@ from django.http import Http404
 from django.shortcuts import render
 from .models import Book, Author, BookInstance, Genre
 from django.views import generic
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+import datetime
+from .forms import RenewBookForm
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 def index(request):
     num_books = Book.objects.all().count()
@@ -111,3 +118,79 @@ class ViewAllBookInstancesForLibrarian(PermissionRequiredMixin, generic.ListView
 
     def get_queryset(self):
         return BookInstance.objects.all().order_by('due_back')
+
+class GenreListView(LoginRequiredMixin, generic.ListView):
+    model = Genre
+    paginate_by = 10
+    def get_queryset(self):
+        return Genre.objects.all()[:5]
+    template_name = 'genres/genre_list.html'
+
+class GenreDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Genre
+    template_name = 'genres/genre_detail.html'
+
+    def genre_detail_view(request, pk):
+        try:
+            genre_id = Genre.objects.get(pk=pk)
+        except:
+            raise Http404("Genre does not exist")
+
+        return render(
+            request,
+            'genre/genre_detail.html',
+            context={'genre': genre_id, }
+        )
+
+def renew_book_librarian(request, pk):
+    book_inst = get_object_or_404(BookInstance, pk=pk)
+
+    if request.method == 'POST':
+        form = RenewBookForm(request.POST)
+        if form.is_valid():
+            book_inst.due_back = form.cleaned_data['renewal_date']
+            book_inst.save()
+            return HttpResponseRedirect(reverse('all_borrowed') )
+
+    else:
+        proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
+        form = RenewBookForm(initial={'renewal_date': proposed_renewal_date,})
+
+    return render(request, 'book_renew_librarian.html', {'form': form, 'bookinst':book_inst})
+
+class AuthorCreate(CreateView):
+    model = Author
+    fields = '__all__'
+    initial={'date_of_death':'12/10/2016',}
+
+class AuthorUpdate(UpdateView):
+    model = Author
+    fields = ['first_name','last_name','date_of_birth','date_of_death']
+
+class AuthorDelete(DeleteView):
+    model = Author
+    success_url = reverse_lazy('authors')
+
+class BookCreate(CreateView):
+    model = Book
+    fields = '__all__'
+
+class BookUpdate(UpdateView):
+    model = Book
+    fields = '__all__'
+
+class BookDelete(DeleteView):
+    model = Book
+    success_url = reverse_lazy('books')
+
+class GenreCreate(CreateView):
+    model = Genre
+    fields = '__all__'
+
+class GenreUpdate(UpdateView):
+    model = Genre
+    fields = '__all__'
+
+class GenreDelete(DeleteView):
+    model = Genre
+    success_url = reverse_lazy('genres')

@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Genre: {{ genre.name }}</h1>
+
+  <div class="books_info" style="padding-left:30px;;">
+    <h2>Books</h2>
+    <dl>
+      {% for book in genre.book_set.all %}
+        <dt><a href="{% url 'book_detail' book.pk %}">{{book.title}}</a></dt>
+          <dd>
+            {{ book.summary }}
+          </dd>
+        {% empty %}
+        <dt>No books for this genre</dt>
+      {% endfor %}
+    </dl>
+  </div>
+{% endblock %}

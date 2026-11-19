@@ -19,6 +19,9 @@ class Author(models.Model):
 class Genre(models.Model):
     name = models.CharField(max_length=100)
 
+    def get_absolute_url(self):
+        return reverse('genre_detail', args=[str(self.id)])
+
     def __str__(self):
         return self.name
 
