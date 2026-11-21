@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Language: {{ language.name }}</h1>
+
+  <div class="books_info" style="padding-left:30px;;">
+    <h2>Books</h2>
+    <dl>
+      {% for book in language.book_set.all %}
+        <dt><a href="{% url 'book_detail' book.pk %}">{{book.title}}</a></dt>
+          <dd>
+            {{ book.summary }}
+          </dd>
+        {% empty %}
+        <dt>No books for this language</dt>
+      {% endfor %}
+    </dl>
+  </div>
+{% endblock %}

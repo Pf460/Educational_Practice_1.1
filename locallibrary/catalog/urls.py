@@ -18,6 +18,8 @@ urlpatterns = [
     re_path(r'^author/(?P<pk>\d+)$', views.AuthorDetailView.as_view(), name='author_detail'),
     re_path(r'^genres/$', views.GenreListView.as_view(), name='genres'),
     re_path(r'^genre/(?P<pk>\d+)$', views.GenreDetailView.as_view(), name='genre_detail'),
+    re_path(r'^languages/$', views.LanguageListView.as_view(), name='languages'),
+    re_path(r'^language/(?P<pk>\d+)$', views.LanguageDetailView.as_view(), name='language_detail'),
     re_path(r'^mybooks/$', views.BookInstanceOnLoanView.as_view(), name='my_borrowed'),
     re_path(r'^allborrowed/$', views.ViewAllBookInstancesForLibrarian.as_view(), name='all_borrowed'),
     re_path(r'^book/(?P<pk>[-\w]+)/renew/$', views.renew_book_librarian, name='renew_book_librarian'),
@@ -30,4 +32,7 @@ urlpatterns = [
     re_path(r'^genre/create/$', views.GenreCreate.as_view(), name='genre_create'),
     re_path(r'^genre/(?P<pk>\d+)/update/$', views.GenreUpdate.as_view(), name='genre_update'),
     re_path(r'^genre/(?P<pk>\d+)/delete/$', views.GenreDelete.as_view(), name='genre_delete'),
+    re_path(r'^language/create/$', views.LanguageCreate.as_view(), name='language_create'),
+    re_path(r'^language/(?P<pk>\d+)/update/$', views.LanguageUpdate.as_view(), name='language_update'),
+    re_path(r'^language/(?P<pk>\d+)/delete/$', views.LanguageDelete.as_view(), name='language_delete'),
 ]

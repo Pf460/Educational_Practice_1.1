@@ -30,4 +30,9 @@ class BookInstanceAdmin(admin.ModelAdmin):
         }),
     )
 
+class LanguageAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    inlines = [BooksInline]
+
 admin.site.register(Genre)
+

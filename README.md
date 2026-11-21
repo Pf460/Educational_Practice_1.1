@@ -10,7 +10,15 @@
 ````bash
 git clone https://github.com/Pf460/Educational_Practice_1.1.git
 
-cd locallivrary
+cd locallibrary
+python -m venv .venv
+````
+
+Активируем виртуальное окружение в соответствии с ОС
+
+````bash
+pip install -r requirements.txt
+python manage.py migrate
 python manage.py createsuperuser
 
 python manage.py runserver

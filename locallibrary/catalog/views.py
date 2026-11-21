@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404
 from django.shortcuts import render
-from .models import Book, Author, BookInstance, Genre
+from .models import Book, Author, BookInstance, Genre, Language
 from django.views import generic
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
@@ -138,9 +138,33 @@ class GenreDetailView(LoginRequiredMixin, generic.DetailView):
 
         return render(
             request,
-            'genre/genre_detail.html',
+            'genres/genre_detail.html',
             context={'genre': genre_id, }
         )
+
+class LanguageListView(LoginRequiredMixin, generic.ListView):
+    model = Language
+    paginate_by = 10
+    template_name = 'languages/language_list.html'
+    def get_queryset(self):
+        return Language.objects.all()[:5]
+
+class LanguageDetailView(generic.DetailView):
+    model = Language
+    template_name = 'languages/language_detail.html'
+
+    def language_detail_view(request, pk):
+        try:
+            language_id = Language.objects.get(pk=pk)
+        except:
+            raise Http404("Genre does not exist")
+
+        return render(
+            request,
+            'languages/language_detail.html',
+            context={'language': language_id, }
+        )
+
 
 def renew_book_librarian(request, pk):
     book_inst = get_object_or_404(BookInstance, pk=pk)
@@ -157,6 +181,18 @@ def renew_book_librarian(request, pk):
         form = RenewBookForm(initial={'renewal_date': proposed_renewal_date,})
 
     return render(request, 'book_renew_librarian.html', {'form': form, 'bookinst':book_inst})
+
+class LanguageCreate(CreateView):
+    model = Language
+    fields = '__all__'
+
+class LanguageUpdate(UpdateView):
+    model = Language
+    fields = '__all__'
+
+class LanguageDelete(DeleteView):
+    model = Language
+    success_url = reverse_lazy('languages')
 
 class AuthorCreate(CreateView):
     model = Author
